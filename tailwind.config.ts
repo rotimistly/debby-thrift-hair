@@ -57,6 +57,14 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        pink: {
+          light: "hsl(var(--pink-light))",
+          medium: "hsl(var(--pink-medium))",
+          dark: "hsl(var(--pink-dark))",
+        },
+        "rose-gold": "hsl(var(--rose-gold))",
+        cream: "hsl(var(--cream))",
+        whatsapp: "hsl(var(--whatsapp))",
       },
       borderRadius: {
         lg: "var(--radius)",
