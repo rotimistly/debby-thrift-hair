@@ -27,6 +27,13 @@ const formatPrice = (price: number | null) => {
   }).format(price);
 };
 
+// Map for default product images
+const defaultImageMap: Record<string, string> = {
+  "default-1": hairStraight,
+  "default-2": hairWavy,
+  "default-3": hairCurly,
+};
+
 // Default products to show when database is empty
 const defaultProducts: Product[] = [
   {
@@ -54,6 +61,12 @@ const defaultProducts: Product[] = [
     price: 35000,
   },
 ];
+
+// Helper to get image URL with fallback
+const getImageUrl = (product: Product): string | null => {
+  if (product.image_url) return product.image_url;
+  return defaultImageMap[product.id] || null;
+};
 
 const Products = () => {
   const [products, setProducts] = useState<Product[]>(defaultProducts);
@@ -122,9 +135,9 @@ const Products = () => {
                 className="group overflow-hidden border-border transition-all duration-300 hover:shadow-lg"
               >
                 <div className="relative aspect-square overflow-hidden bg-secondary">
-                  {product.image_url ? (
+                  {getImageUrl(product) ? (
                     <img
-                      src={product.image_url}
+                      src={getImageUrl(product)!}
                       alt={product.name}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
