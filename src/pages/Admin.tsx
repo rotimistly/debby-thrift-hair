@@ -2,11 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trash2, Plus, LogOut, ArrowLeft } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Card } from "@/components/ui/card";
+import { LogOut, ArrowLeft } from "lucide-react";
+import ProductForm from "@/components/admin/ProductForm";
+import ProductCard from "@/components/admin/ProductCard";
 
 interface Product {
   id: string;
@@ -14,6 +13,7 @@ interface Product {
   description: string | null;
   image_url: string | null;
   tag: string | null;
+  price: number | null;
   created_at: string;
 }
 
@@ -21,13 +21,6 @@ const Admin = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [newProduct, setNewProduct] = useState({
-    name: "",
-    description: "",
-    image_url: "",
-    tag: "",
-  });
-  const { toast } = useToast();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,67 +56,10 @@ const Admin = () => {
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (error) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch products",
-        variant: "destructive",
-      });
-    } else {
+    if (!error) {
       setProducts(data || []);
     }
     setLoading(false);
-  };
-
-  const addProduct = async () => {
-    if (!newProduct.name.trim()) {
-      toast({
-        title: "Error",
-        description: "Product name is required",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const { error } = await supabase.from("products").insert({
-      name: newProduct.name.trim(),
-      description: newProduct.description.trim() || null,
-      image_url: newProduct.image_url.trim() || null,
-      tag: newProduct.tag.trim() || null,
-    });
-
-    if (error) {
-      toast({
-        title: "Error",
-        description: "Failed to add product",
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Success",
-        description: "Product added successfully",
-      });
-      setNewProduct({ name: "", description: "", image_url: "", tag: "" });
-      fetchProducts();
-    }
-  };
-
-  const deleteProduct = async (id: string) => {
-    const { error } = await supabase.from("products").delete().eq("id", id);
-
-    if (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete product",
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Success",
-        description: "Product deleted successfully",
-      });
-      fetchProducts();
-    }
   };
 
   const handleLogout = async () => {
@@ -152,55 +88,8 @@ const Admin = () => {
           </Button>
         </div>
 
-        {/* Add New Product Form */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Plus className="h-5 w-5" />
-              Add New Product
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Input
-                placeholder="Product Name *"
-                value={newProduct.name}
-                onChange={(e) =>
-                  setNewProduct({ ...newProduct, name: e.target.value })
-                }
-              />
-              <Input
-                placeholder="Tag (e.g., Best Seller, New Arrival)"
-                value={newProduct.tag}
-                onChange={(e) =>
-                  setNewProduct({ ...newProduct, tag: e.target.value })
-                }
-              />
-            </div>
-            <Textarea
-              placeholder="Product Description"
-              value={newProduct.description}
-              onChange={(e) =>
-                setNewProduct({ ...newProduct, description: e.target.value })
-              }
-            />
-            <Input
-              placeholder="Image URL (optional)"
-              value={newProduct.image_url}
-              onChange={(e) =>
-                setNewProduct({ ...newProduct, image_url: e.target.value })
-              }
-            />
-          </CardContent>
-          <CardFooter>
-            <Button onClick={addProduct} className="w-full sm:w-auto">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Product
-            </Button>
-          </CardFooter>
-        </Card>
+        <ProductForm onProductAdded={fetchProducts} />
 
-        {/* Products List */}
         <h2 className="mb-4 text-xl font-semibold text-foreground">
           Your Products ({products.length})
         </h2>
@@ -216,45 +105,11 @@ const Admin = () => {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {products.map((product) => (
-              <Card key={product.id} className="overflow-hidden">
-                {product.image_url && (
-                  <div className="aspect-square overflow-hidden">
-                    <img
-                      src={product.image_url}
-                      alt={product.name}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                )}
-                <CardContent className="p-4">
-                  <div className="mb-2 flex items-start justify-between">
-                    <h3 className="font-semibold text-foreground">
-                      {product.name}
-                    </h3>
-                    {product.tag && (
-                      <span className="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
-                        {product.tag}
-                      </span>
-                    )}
-                  </div>
-                  {product.description && (
-                    <p className="text-sm text-muted-foreground">
-                      {product.description}
-                    </p>
-                  )}
-                </CardContent>
-                <CardFooter className="border-t p-4">
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => deleteProduct(product.id)}
-                    className="w-full"
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete Product
-                  </Button>
-                </CardFooter>
-              </Card>
+              <ProductCard
+                key={product.id}
+                product={product}
+                onDelete={fetchProducts}
+              />
             ))}
           </div>
         )}

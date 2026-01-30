@@ -15,16 +15,27 @@ interface Product {
   description: string | null;
   image_url: string | null;
   tag: string | null;
+  price: number | null;
 }
 
+const formatPrice = (price: number | null) => {
+  if (price === null) return null;
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    minimumFractionDigits: 0,
+  }).format(price);
+};
+
 // Default products to show when database is empty
-const defaultProducts = [
+const defaultProducts: Product[] = [
   {
     id: "default-1",
     name: "Sleek Straight Hair",
     description: "Elegant bone-straight hair for a polished, sophisticated look.",
     image_url: hairStraight,
     tag: "Best Seller",
+    price: 25000,
   },
   {
     id: "default-2",
@@ -32,6 +43,7 @@ const defaultProducts = [
     description: "Beautiful wavy texture that adds volume and natural movement.",
     image_url: hairWavy,
     tag: "Popular",
+    price: 30000,
   },
   {
     id: "default-3",
@@ -39,6 +51,7 @@ const defaultProducts = [
     description: "Gorgeous curls that make a bold, glamorous statement.",
     image_url: hairCurly,
     tag: "New Arrival",
+    price: 35000,
   },
 ];
 
@@ -132,6 +145,11 @@ const Products = () => {
                   <h3 className="mb-2 text-xl font-semibold text-foreground">
                     {product.name}
                   </h3>
+                  {product.price !== null && (
+                    <p className="mb-2 text-lg font-bold text-primary">
+                      {formatPrice(product.price)}
+                    </p>
+                  )}
                   {product.description && (
                     <p className="text-sm text-muted-foreground">
                       {product.description}
