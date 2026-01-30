@@ -7,9 +7,9 @@ const Header = () => {
   return (
     <header className="fixed left-0 right-0 top-0 z-40 border-b border-border bg-card/80 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <div className="flex items-center gap-2">
-          <span className="text-xl font-bold text-primary">Thrift</span>
-          <span className="text-xl font-light text-foreground">Hairs</span>
+        <div className="flex items-center gap-1">
+          <span className="text-xl font-bold text-primary">Debby's</span>
+          <span className="text-xl font-light text-foreground">Thrift Hair</span>
         </div>
         
         <nav className="hidden items-center gap-6 md:flex">
