@@ -22,6 +22,9 @@ const Header = () => {
           <a href="#contact" className="text-sm text-muted-foreground transition-colors hover:text-primary">
             Contact
           </a>
+          <a href="/admin" className="text-sm text-muted-foreground transition-colors hover:text-primary">
+            Admin
+          </a>
         </nav>
 
         <Button asChild className="gap-2">
