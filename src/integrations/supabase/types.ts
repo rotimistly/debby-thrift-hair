@@ -23,6 +23,7 @@ export type Database = {
           name: string
           price: number | null
           tag: string | null
+          video_url: string | null
         }
         Insert: {
           created_at?: string
@@ -32,6 +33,7 @@ export type Database = {
           name: string
           price?: number | null
           tag?: string | null
+          video_url?: string | null
         }
         Update: {
           created_at?: string
@@ -41,6 +43,7 @@ export type Database = {
           name?: string
           price?: number | null
           tag?: string | null
+          video_url?: string | null
         }
         Relationships: []
       }
