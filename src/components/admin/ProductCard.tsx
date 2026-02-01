@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Trash2 } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Product {
@@ -18,6 +18,7 @@ interface Product {
 interface ProductCardProps {
   product: Product;
   onDelete: () => void;
+  onEdit: (product: Product) => void;
 }
 
 const formatPrice = (price: number | null) => {
@@ -29,7 +30,7 @@ const formatPrice = (price: number | null) => {
   }).format(price);
 };
 
-const ProductCard = ({ product, onDelete }: ProductCardProps) => {
+const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => {
   const { toast } = useToast();
 
   const deleteProduct = async () => {
@@ -105,15 +106,24 @@ const ProductCard = ({ product, onDelete }: ProductCardProps) => {
           </p>
         )}
       </CardContent>
-      <CardFooter className="border-t p-4">
+      <CardFooter className="flex gap-2 border-t p-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onEdit(product)}
+          className="flex-1"
+        >
+          <Pencil className="mr-2 h-4 w-4" />
+          Edit
+        </Button>
         <Button
           variant="destructive"
           size="sm"
           onClick={deleteProduct}
-          className="w-full"
+          className="flex-1"
         >
           <Trash2 className="mr-2 h-4 w-4" />
-          Delete Product
+          Delete
         </Button>
       </CardFooter>
     </Card>
