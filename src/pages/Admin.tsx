@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { LogOut, ArrowLeft } from "lucide-react";
 import ProductForm from "@/components/admin/ProductForm";
 import ProductCard from "@/components/admin/ProductCard";
+import ProductEditModal from "@/components/admin/ProductEditModal";
 
 interface Product {
   id: string;
@@ -22,6 +23,8 @@ const Admin = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -68,6 +71,11 @@ const Admin = () => {
     navigate("/");
   };
 
+  const handleEdit = (product: Product) => {
+    setEditingProduct(product);
+    setEditModalOpen(true);
+  };
+
   if (!isAuthenticated) {
     return null;
   }
@@ -110,10 +118,18 @@ const Admin = () => {
                 key={product.id}
                 product={product}
                 onDelete={fetchProducts}
+                onEdit={handleEdit}
               />
             ))}
           </div>
         )}
+
+        <ProductEditModal
+          product={editingProduct}
+          open={editModalOpen}
+          onOpenChange={setEditModalOpen}
+          onProductUpdated={fetchProducts}
+        />
       </div>
     </div>
   );
