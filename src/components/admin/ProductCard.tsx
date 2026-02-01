@@ -9,6 +9,7 @@ interface Product {
   name: string;
   description: string | null;
   image_url: string | null;
+  video_url: string | null;
   tag: string | null;
   price: number | null;
   created_at: string;
@@ -39,6 +40,13 @@ const ProductCard = ({ product, onDelete }: ProductCardProps) => {
       await supabase.storage.from('product-images').remove([fileName]);
     }
 
+    // Delete video from storage if exists
+    if (product.video_url && product.video_url.includes('product-videos')) {
+      const urlParts = product.video_url.split('/');
+      const fileName = urlParts[urlParts.length - 1];
+      await supabase.storage.from('product-videos').remove([fileName]);
+    }
+
     const { error } = await supabase.from("products").delete().eq("id", product.id);
 
     if (error) {
@@ -58,7 +66,15 @@ const ProductCard = ({ product, onDelete }: ProductCardProps) => {
 
   return (
     <Card className="overflow-hidden">
-      {product.image_url && (
+      {product.video_url ? (
+        <div className="aspect-square overflow-hidden">
+          <video
+            src={product.video_url}
+            controls
+            className="h-full w-full object-cover"
+          />
+        </div>
+      ) : product.image_url ? (
         <div className="aspect-square overflow-hidden">
           <img
             src={product.image_url}
@@ -66,7 +82,7 @@ const ProductCard = ({ product, onDelete }: ProductCardProps) => {
             className="h-full w-full object-cover"
           />
         </div>
-      )}
+      ) : null}
       <CardContent className="p-4">
         <div className="mb-2 flex items-start justify-between">
           <h3 className="font-semibold text-foreground">

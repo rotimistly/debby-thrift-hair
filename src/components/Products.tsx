@@ -14,6 +14,7 @@ interface Product {
   name: string;
   description: string | null;
   image_url: string | null;
+  video_url: string | null;
   tag: string | null;
   price: number | null;
 }
@@ -41,6 +42,7 @@ const defaultProducts: Product[] = [
     name: "Sleek Straight Hair",
     description: "Elegant bone-straight hair for a polished, sophisticated look.",
     image_url: hairStraight,
+    video_url: null,
     tag: "Best Seller",
     price: 25000,
   },
@@ -49,6 +51,7 @@ const defaultProducts: Product[] = [
     name: "Body Wave Hair",
     description: "Beautiful wavy texture that adds volume and natural movement.",
     image_url: hairWavy,
+    video_url: null,
     tag: "Popular",
     price: 30000,
   },
@@ -57,6 +60,7 @@ const defaultProducts: Product[] = [
     name: "Bouncy Curly Hair",
     description: "Gorgeous curls that make a bold, glamorous statement.",
     image_url: hairCurly,
+    video_url: null,
     tag: "New Arrival",
     price: 35000,
   },
@@ -135,7 +139,20 @@ const Products = () => {
                 className="group overflow-hidden border-border transition-all duration-300 hover:shadow-lg"
               >
                 <div className="relative aspect-square overflow-hidden bg-secondary">
-                  {getImageUrl(product) ? (
+                  {product.video_url ? (
+                    <video
+                      src={product.video_url}
+                      className="h-full w-full object-cover"
+                      muted
+                      loop
+                      playsInline
+                      onMouseEnter={(e) => e.currentTarget.play()}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.pause();
+                        e.currentTarget.currentTime = 0;
+                      }}
+                    />
+                  ) : getImageUrl(product) ? (
                     <img
                       src={getImageUrl(product)!}
                       alt={product.name}
